@@ -51,8 +51,10 @@ static NSString *RONGCLOUD_NAME = @"testname";
 
 -(void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken
 {
+    NSLog(@"device token: %@", deviceToken.description);
+    
     //首先处理接收到的token
-    NSString *token = [[[[deviceToken description]
+    NSString *token = [[[deviceToken.description
                          stringByReplacingOccurrencesOfString:@"<" withString:@""]
                         stringByReplacingOccurrencesOfString:@">" withString:@""]
                        stringByReplacingOccurrencesOfString:@" " withString:@""];
@@ -61,12 +63,17 @@ static NSString *RONGCLOUD_NAME = @"testname";
     [[RCIMClient sharedRCIMClient] setDeviceToken:token];
     
     //使用获取到的token连接融云服务器
-    [[RCIM sharedRCIM] connectWithToken:token success:^(NSString *userId)
+    [[RCIM sharedRCIM] connectWithToken:token
+                                success:^(NSString *userId)
     {
         NSLog(@"success: %@", userId);
-    } error:^(RCConnectErrorCode status) {
+    }
+                                  error:^(RCConnectErrorCode status)
+    {
         NSLog(@"error: %ld", (long)status);
-    } tokenIncorrect:^{
+    }
+                         tokenIncorrect:^
+    {
         NSLog(@"token incorrect");
     }];
 }

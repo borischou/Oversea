@@ -7,9 +7,11 @@
 //
 
 #import "AppDelegate.h"
-#import "ViewController.h"
+#import "OSChatListViewController.h"
 #import <RongIMKit/RongIMKit.h>
 
+//暂时使用API调试器生成的token
+static NSString *RONGCLOUD_IM_USER_TOKEN = @"fBuDHDfihoRm2QVfO8eZhuCa9u6Wz+0Z+0vIpP8q7KfUFDM0xM0w0SchcVSb4j+hoF2FkCOXNn/bXTcqxsRsLg==";
 static NSString *RONGCLOUD_IM_APPKEY = @"vnroth0kr9zho";
 static NSString *RONGCLOUD_USER_ID = @"testid";
 static NSString *RONGCLOUD_NAME = @"testname";
@@ -22,13 +24,14 @@ static NSString *RONGCLOUD_NAME = @"testname";
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    [self setupRongCloud];
     self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
-    ViewController *vc = [[ViewController alloc] init];
-    vc.view.backgroundColor = [UIColor whiteColor];
-    self.window.rootViewController = vc;
+    OSChatListViewController *clvc = [[OSChatListViewController alloc] initWithDisplayConversationTypes:@[@(0)] collectionConversationType:@[@(0)]]; //默认会话类型
+    clvc.view.backgroundColor = [UIColor whiteColor];
+    UINavigationController *nvc = [[UINavigationController alloc] initWithRootViewController:clvc];
+    self.window.rootViewController = nvc;
     [self.window makeKeyAndVisible];
     
-    [self setupRongCloud];
     //推送处理
     if ([application respondsToSelector:@selector(registerUserNotificationSettings:)])
     {
@@ -61,21 +64,6 @@ static NSString *RONGCLOUD_NAME = @"testname";
     
     //给客户端设置deviceToken
     [[RCIMClient sharedRCIMClient] setDeviceToken:token];
-    
-    //使用获取到的token连接融云服务器
-    [[RCIM sharedRCIM] connectWithToken:token
-                                success:^(NSString *userId)
-    {
-        NSLog(@"success: %@", userId);
-    }
-                                  error:^(RCConnectErrorCode status)
-    {
-        NSLog(@"error: %ld", (long)status);
-    }
-                         tokenIncorrect:^
-    {
-        NSLog(@"token incorrect");
-    }];
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application
@@ -119,6 +107,21 @@ static NSString *RONGCLOUD_NAME = @"testname";
     
     //设置连接代理
     //[[RCIM sharedRCIM] setConnectionStatusDelegate:self];
+    
+    //使用获取到的token连接融云服务器
+    [[RCIM sharedRCIM] connectWithToken:RONGCLOUD_IM_USER_TOKEN
+                                success:^(NSString *userId)
+     {
+         NSLog(@"success: %@", userId);
+     }
+                                  error:^(RCConnectErrorCode status)
+     {
+         NSLog(@"error: %ld", (long)status);
+     }
+                         tokenIncorrect:^
+     {
+         NSLog(@"token incorrect");
+     }];
 }
 
 #pragma mark - RCIMUserInfoDataSource

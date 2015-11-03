@@ -16,7 +16,7 @@ static NSString *RONGCLOUD_IM_APPKEY = @"vnroth0kr9zho";
 static NSString *RONGCLOUD_USER_ID = @"testid";
 static NSString *RONGCLOUD_NAME = @"testname";
 
-@interface AppDelegate () <RCIMUserInfoDataSource> //RCIMConnectionStatusDelegate
+@interface AppDelegate () <RCIMUserInfoDataSource, RCIMConnectionStatusDelegate>
 
 @end
 
@@ -106,7 +106,7 @@ static NSString *RONGCLOUD_NAME = @"testname";
     [[RCIM sharedRCIM] setUserInfoDataSource:self];
     
     //设置连接代理
-    //[[RCIM sharedRCIM] setConnectionStatusDelegate:self];
+    [[RCIM sharedRCIM] setConnectionStatusDelegate:self];
     
     //使用获取到的token连接融云服务器
     [[RCIM sharedRCIM] connectWithToken:RONGCLOUD_IM_USER_TOKEN
@@ -133,6 +133,9 @@ static NSString *RONGCLOUD_NAME = @"testname";
 
 #pragma mark - RCIMConnectionStatusDelegate
 
-
+-(void)onRCIMConnectionStatusChanged:(RCConnectionStatus)status
+{
+    NSLog(@"onRCIMConnectionStatusChanged: %ld", (long)status);
+}
 
 @end

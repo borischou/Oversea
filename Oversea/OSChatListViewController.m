@@ -11,7 +11,7 @@
 static NSString *TARGET_ID = @"test_targetid";
 static NSString *USER_NAME = @"testname";
 
-@interface OSChatListViewController ()
+@interface OSChatListViewController () <RCIMReceiveMessageDelegate>
 
 @end
 
@@ -21,7 +21,6 @@ static NSString *USER_NAME = @"testname";
 {
     [super viewDidLoad];
     [self setupBarbuttonItems];
-    NSOperation *op = [[NSOperation alloc] init];
 }
 
 - (void)didReceiveMemoryWarning
@@ -50,6 +49,25 @@ static NSString *USER_NAME = @"testname";
     cvc.userName = model.conversationTitle;
     cvc.title = model.conversationTitle;
     [self.navigationController pushViewController:cvc animated:YES];
+}
+
+#pragma mark - RCIMClientReceiveMessageDelegate
+
+-(void)onRCIMReceiveMessage:(RCMessage *)message left:(int)left
+{
+    NSLog(@"onRCIMReceiveMessage message: %@ left: %d", message, left);
+}
+
+-(BOOL)onRCIMCustomAlertSound:(RCMessage *)message
+{
+    NSLog(@"onRCIMCustomAlertSound message: %@", message);
+    return YES;
+}
+
+-(BOOL)onRCIMCustomLocalNotification:(RCMessage *)message withSenderName:(NSString *)senderName
+{
+    NSLog(@"onRCIMCustomLocalNotification message: %@ withSenderName: %@", message, senderName);
+    return YES;
 }
 
 @end
